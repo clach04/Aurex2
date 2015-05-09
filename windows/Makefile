@@ -38,20 +38,22 @@ LIBWIDGETDIR=lib/widget
 
 INCLUDE=-Iinclude -I../common/include -I../widgetlib/include
 
+#myCYGWIN_FLAG=-mno-cygwin
+myCYGWIN_FLAG=
 CXX=g++
-CXXFLAGS=-DWINVER=0x0500 -D_WIN32_WINNT=0x500 -Wall $(INCLUDE) $(OPTIMIZE) -mno-cygwin -mwindows
+CXXFLAGS=-DWINVER=0x0500 -D_WIN32_WINNT=0x500 -Wall $(INCLUDE) $(OPTIMIZE) $(myCYGWIN_FLAG) -mwindows
 
 $(TARGET): commonlib widgetlib resources $(OBJS)
-	$(CXX) $(LDFLAGS) -mno-cygwin -mwindows -o $(TARGET) $(OBJS) $(RES) -Wl,-Map,$(TARGET).map  -L$(LIBCOMMONDIR) -lrupcommon -L$(LIBWIDGETDIR) -lwidget -lwinmm -lcomctl32
+	$(CXX) $(LDFLAGS) $(myCYGWIN_FLAG) -mwindows -o $(TARGET) $(OBJS) $(RES) -Wl,-Map,$(TARGET).map  -L$(LIBCOMMONDIR) -lrupcommon -L$(LIBWIDGETDIR) -lwidget -lwinmm -lcomctl32
 
 resources:
 	$(MAKE) -C ./resource/
 
 commonlib: $(LIBCOMMONDIR)/$(LIBCOMMON)
-	$(MAKE) -C ../common/ TARGET_DIR=../windows/$(LIBCOMMONDIR) CXXFLAGS_SD="-mno-cygwin -mwindows -DHAVE_SDCONFIG" INCLUDE_SD=-I../windows/include
+	$(MAKE) -C ../common/ TARGET_DIR=../windows/$(LIBCOMMONDIR) CXXFLAGS_SD='$(myCYGWIN_FLAG) -mwindows -DHAVE_SDCONFIG' INCLUDE_SD=-I../windows/include
 
 widgetlib: $(LIBWIDGETDIR)/$(LIBWIDGET)
-	$(MAKE) -C ../widgetlib/ TARGET_DIR=../windows/$(LIBWIDGETDIR) CXXFLAGS_SD="-mno-cygwin -mwindows -DHAVE_SDCONFIG" INCLUDE_SD=-I../windows/include
+	$(MAKE) -C ../widgetlib/ TARGET_DIR=../windows/$(LIBWIDGETDIR) CXXFLAGS_SD='$(myCYGWIN_FLAG) -mwindows -DHAVE_SDCONFIG' INCLUDE_SD=-I../windows/include
 
 $(LIBCOMMONDIR)/$(LIBCOMMON):
 	mkdir -p $(LIBCOMMONDIR)
